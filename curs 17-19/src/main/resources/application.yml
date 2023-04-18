@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/studenti
+    username: postgres
+    password: postgres
+
+server:
+  port: 8081
+
+jwt:
+  cookieName: devmindApp
+  secret: secret
+  accessTokenValiditityMS: 360000
