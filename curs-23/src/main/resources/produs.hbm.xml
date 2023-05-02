@@ -1,0 +1,25 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name = "com.example.curshibernate2xml.hibernate3.Produs" table = "PRODUSE">
+
+        <meta attribute = "class-description">
+            Contine informatii despre produs
+        </meta>
+
+        <id name = "id" type = "int" column = "id">
+            <generator class="native"/>
+        </id>
+
+        <property name = "descriere" column = "descriere" type = "string"/>
+        <property name = "cantitate" column = "cantitate" type = "integer"/>
+
+        <property name="producator" type="com.example.curshibernate2xml.model.Producator">
+            <column name="producator_first_name"/>
+            <column name="producator_second_name"/>
+        </property>
+    </class>
+</hibernate-mapping>
