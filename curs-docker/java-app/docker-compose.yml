@@ -1,0 +1,59 @@
+version: "3.8"
+
+#Describe the services of the compose
+services:
+  #Service name used for the SQL container
+  spring-app-db:
+    container_name: spring-app-db
+    image: postgres:11.1-alpine
+    networks:
+      - main-network
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=studenti
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d studenti -U postgres" ]
+      interval: 10s
+      timeout: 1s
+      retries: 5
+    command: postgres -c 'shared_buffers=256MB' -c 'max_connections=600' -c 'log_min_duration_statement=200'
+    # Port mapping
+    ports:
+      - "5433:5432"
+
+  spring-app-db-flyway:
+    container_name: spring-app-db-flyway
+    build:
+      context: ./database
+    depends_on:
+      spring-app-db:
+        condition: service_healthy
+    networks:
+      - main-network
+    environment:
+      - FLYWAY_URL=jdbc:postgresql://spring-app-db:5432/studenti
+      - FLYWAY_LOCATIONS=filesystem:/flyway/sql
+      - FLYWAY_SCHEMAS=studenti
+      - FLYWAY_TABLE=schema_version
+      - FLYWAY_USER=postgres
+      - FLYWAY_PASSWORD=postgres
+    command: migrate
+
+  # Service name used for the application container
+  spring-app-api:
+    container_name: spring-prod-app
+    environment:
+      - DB_HOST=spring-app-db
+      - DB_PORT=5432
+    networks:
+      - main-network
+    build:
+      context: .
+    # Port mapping
+    ports:
+      - "8081:8081"
+
+# Network used to connect the containers
+networks:
+  main-network:
